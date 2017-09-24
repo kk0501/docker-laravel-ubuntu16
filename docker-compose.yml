@@ -1,64 +1,71 @@
 version: "2"
 services:
   ubuntu:
-    image: fuke0501/ubuntu:v1
+    image: fuke0501/ubuntu
     build: ./images/ubuntu/
     container_name: ubuntu
+
   web:
-    image: fuke0501/nginx:v1
+    image: fuke0501/nginx
     build: ./images/nginx/
     container_name: web_nginx
     depends_on:
       - ubuntu
-      - php
+      - php-fpm
     volumes:
       - ./app:/app
       - ./images/nginx/logs:/var/log/nginx
       - ./images/nginx/conf/nginx.conf:/etc/nginx/nginx.conf
       - ./images/nginx/conf/conf.d:/etc/nginx/conf.d
     ports:
-      - "18080:80"
-      - "14430:443"
+      - "8080:80"
+      - "4430:443"
     privileged: true
     restart: always
     networks:
       vpcbr:
         ipv4_address: 10.0.0.2
-  php:
-    image: fuke0501/php-fpm:v1
+
+  php-fpm:
+    image: fuke0501/php-fpm
     build: ./images/php/
     container_name: web_php
     depends_on:
       - ubuntu
     volumes:
       - ./app:/app
-      - ./images/php/conf/php.ini:/etc/php/7.1/fpm/php.ini
-      - ./images/php/conf/www.conf:/etc/php/7.1/fpm/pool.d/www.conf
+      - ./images/php/conf/php.ini:/etc/php/7.0/fpm/php.ini
+      - ./images/php/conf/www.conf:/etc/php/7.0/fpm/pool.d/www.conf
     ports:
       - "9000:9000"
     privileged: true
     restart: always
     links:
-      - mysql
+      - mysql_db
     networks:
       vpcbr:
         ipv4_address: 10.0.0.3
-  mysql:
-    image: fuke0501/mysql5.7:v1
+
+  mysql_db:
+    image: fuke0501/mysql5.7
     build: ./images/mysql/
     container_name: web_mysql
-    depends_on:
-      - ubuntu
     volumes:
       - ./images/mysql/data:/var/lib/mysql
+      - ./images/mysql/conf/mysqld.cnf:/etc/mysql/mysql.conf.d/mysqld.cnf
     ports:
       - "3307:3306"
     privileged: true
     restart: always
-    # command: bash -c "mysqladmin -u root password root"
+    environment:
+      - MYSQL_DATABASE=laravel_db
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_USER=laravel
+      - MYSQL_PASSWORD=laravel
     networks:
       vpcbr:
         ipv4_address: 10.0.0.4
+
 networks:
   vpcbr:
     driver: bridge
