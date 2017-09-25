@@ -32,6 +32,7 @@ RUN apt-get update -y \
         php7.0-opcache \
         php7.0-sqlite3 \
         php7.0-zip \
+        php-redis \
         git vim rsyslog \
     && mkdir /run/php/ \
     && groupmod --gid 1000 www-data && usermod --uid 1000 --gid 1000 www-data
