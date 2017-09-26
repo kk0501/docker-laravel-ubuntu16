@@ -5,33 +5,33 @@ VOLUME /app
 ENV WEBROOT /app
 WORKDIR $WEBROOT
 
-RUN apt-get update -y \
+RUN LC_ALL=C.UTF-8 add-apt-repository ppa:ondrej/php -y && apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y --fix-missing \
         build-essential \
         imagemagick \
         ca-certificates \
         libpng12-dev \
         libjpeg-dev \
-        php7.0 \
-        php7.0-cli \
-        php7.0-dev \
-        php7.0-bcmath \
-        php7.0-bz2 \
-        php7.0-fpm \
-        php7.0-common \
-        php7.0-curl \
+        php7.1 \
+        php7.1-cli \
+        php7.1-dev \
+        php7.1-bcmath \
+        php7.1-bz2 \
+        php7.1-fpm \
+        php7.1-common \
+        php7.1-curl \
         php-imagick \
-        php7.0-gd \
-        php7.0-intl \
-        php7.0-json \
+        php7.1-gd \
+        php7.1-intl \
+        php7.1-json \
         php-apcu \
-        php7.0-mbstring \
-        php7.0-mcrypt \
-        php7.0-mysql \
-        php7.0-xml \
-        php7.0-opcache \
-        php7.0-sqlite3 \
-        php7.0-zip \
+        php7.1-mbstring \
+        php7.1-mcrypt \
+        php7.1-mysql \
+        php7.1-xml \
+        php7.1-opcache \
+        php7.1-sqlite3 \
+        php7.1-zip \
         php-redis \
         git vim rsyslog \
     && mkdir /run/php/ \
@@ -46,4 +46,4 @@ RUN curl https://getcomposer.org/installer | php -- && mv composer.phar /usr/loc
 
 EXPOSE 9000
 
-CMD ["php-fpm7.0", "--nodaemonize"]
+CMD ["php-fpm7.1", "--nodaemonize"]

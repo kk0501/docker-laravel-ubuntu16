@@ -41,31 +41,57 @@ services:
     privileged: true
     restart: always
     links:
-      - mysql_db
+      - official_mysql_db
       - redis-server
     networks:
       vpcbr:
         ipv4_address: 10.0.0.3
 
-  mysql_db:
-    image: fuke0501/mysql5.7
-    build: ./images/ubuntu-mysql/
-    container_name: web_mysql
+  php-fpm-71:
+    image: fuke0501/php-fpm71
+    build: 
+      context: ./images/php
+      dockerfile: Dockerfile-php7.1
+    container_name: web_php71
+    depends_on:
+      - ubuntu
     volumes:
-      - ./images/ubuntu-mysql/data:/var/lib/mysql
-      - ./images/ubuntu-mysql/conf/mysqld.cnf:/etc/mysql/mysql.conf.d/mysqld.cnf
+      - ./app:/app
+      - ./images/php/conf/php.ini:/etc/php/7.1/fpm/php.ini
+      - ./images/php/conf/www.conf:/etc/php/7.1/fpm/pool.d/www.conf
     ports:
-      - "3307:3306"
+      - "19000:9000"
     privileged: true
     restart: always
-    environment:
-      - MYSQL_DATABASE=laravel_db
-      - MYSQL_ROOT_PASSWORD=root
-      - MYSQL_USER=laravel
-      - MYSQL_PASSWORD=laravel
+    links:
+      - official_mysql_db
+      - redis-server
     networks:
       vpcbr:
-        ipv4_address: 10.0.0.4
+        ipv4_address: 10.0.0.7
+
+  php-fpm-ffmpeg:
+    image: fuke0501/php-fpmffmpeg
+    build: 
+      context: ./images/php
+      dockerfile: Dockerfile-ffmpeg
+    container_name: web_phpffmpeg
+    depends_on:
+      - ubuntu
+    volumes:
+      - ./app:/app
+      - ./images/php/conf/php.ini:/etc/php/7.1/fpm/php.ini
+      - ./images/php/conf/www.conf:/etc/php/7.1/fpm/pool.d/www.conf
+    ports:
+      - "29000:9000"
+    privileged: true
+    restart: always
+    links:
+      - official_mysql_db
+      - redis-server
+    networks:
+      vpcbr:
+        ipv4_address: 10.0.0.8
 
   redis-server:
     image: fuke0501/redis
@@ -79,29 +105,31 @@ services:
       - "16379:6379"
     privileged: true
     restart: always
+    depends_on:
+      - ubuntu
     networks:
       vpcbr:
         ipv4_address: 10.0.0.5
 
-  # official_mysql_db:
-  #   image: fuke0501/mysql5.7-official
-  #   build: ./images/mysql/
-  #   container_name: web_mysql_official
-  #   volumes:
-  #     - ./images/mysql/data:/var/lib/mysql
-  #     - ./images/mysql/conf/mysqld.cnf:/etc/mysql/mysql.conf.d/mysqld.cnf
-  #   ports:
-  #     - "33060:3306"
-  #   privileged: true
-  #   restart: always
-  #   environment:
-  #     - MYSQL_DATABASE=laravel_db
-  #     - MYSQL_ROOT_PASSWORD=root
-  #     - MYSQL_USER=laravel
-  #     - MYSQL_PASSWORD=laravel
-  #   networks:
-  #     vpcbr:
-  #       ipv4_address: 10.0.0.6
+  official_mysql_db:
+    image: fuke0501/mysql5.7-official
+    build: ./images/mysql/
+    container_name: web_mysql_official
+    volumes:
+      - ./images/mysql/data:/var/lib/mysql
+      - ./images/mysql/conf/mysqld.cnf:/etc/mysql/mysql.conf.d/mysqld.cnf
+    ports:
+      - "13060:3306"
+    privileged: true
+    restart: always
+    environment:
+      - MYSQL_DATABASE=laravel_db
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_USER=laravel
+      - MYSQL_PASSWORD=laravel
+    networks:
+      vpcbr:
+        ipv4_address: 10.0.0.6
 
 networks:
   vpcbr:
