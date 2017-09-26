@@ -41,7 +41,7 @@ services:
     privileged: true
     restart: always
     links:
-      - official_mysql_db
+      - mysql_db
       - redis-server
     networks:
       vpcbr:
@@ -64,7 +64,7 @@ services:
     privileged: true
     restart: always
     links:
-      - official_mysql_db
+      - mysql_db
       - redis-server
     networks:
       vpcbr:
@@ -87,11 +87,33 @@ services:
     privileged: true
     restart: always
     links:
-      - official_mysql_db
+      - mysql_db
       - redis-server
     networks:
       vpcbr:
         ipv4_address: 10.0.0.8
+
+  mysql_db:
+    image: fuke0501/mysql5.7
+    build: ./images/ubuntu-mysql/
+    container_name: web_mysql
+    volumes:
+      - ./images/ubuntu-mysql/data:/var/lib/mysql
+      - ./images/ubuntu-mysql/conf/mysqld.cnf:/etc/mysql/mysql.conf.d/mysqld.cnf
+    ports:
+      - "3307:3306"
+    privileged: true
+    restart: always
+    depends_on:
+      - ubuntu
+    environment:
+      - MYSQL_DATABASE=laravel_db
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_USER=laravel
+      - MYSQL_PASSWORD=laravel
+    networks:
+      vpcbr:
+        ipv4_address: 10.0.0.4
 
   redis-server:
     image: fuke0501/redis
