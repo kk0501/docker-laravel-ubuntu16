@@ -7,6 +7,7 @@ if [ ! -f /var/lib/mysql/ibdata1 ];then
 	MYSQL_USER_PWD=${MYSQL_USER_PWD:-""}
 	MYSQL_USER_DB=${MYSQL_USER_DB:-""}
 	mysqld --initialize-insecure --user=mysql
+	service mysql start $ sleep 10
 
 	echo "[i] Setting root new password."
 	mysql --user=root -e "UPDATE mysql.user set authentication_string=password('$MYSQL_ROOT_PWD') where user='root'; FLUSH PRIVILEGES;"
@@ -15,7 +16,6 @@ if [ ! -f /var/lib/mysql/ibdata1 ];then
 	mysql --user=root --password=$MYSQL_ROOT_PWD -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '$MYSQL_ROOT_PWD' WITH GRANT OPTION; FLUSH PRIVILEGES;"
 	
 	echo "[i] Setting up new power user credentials."
-	service mysql start $ sleep 10
 
 	if [ -n "$MYSQL_USER_DB" ]; then
 		echo "[i] Creating datebase: $MYSQL_USER_DB"
@@ -35,11 +35,11 @@ if [ ! -f /var/lib/mysql/ibdata1 ];then
 			echo "[i] Don\`t need to create new User."
 		fi
 	fi
+	killall mysqld
+	sleep 5
+
 fi
 
-killall mysqld
-sleep 5
-
 echo "[i] Setting end,have fun."
-
 exec "$@"
+
