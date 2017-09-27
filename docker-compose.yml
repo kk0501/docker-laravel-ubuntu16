@@ -113,10 +113,10 @@ services:
     depends_on:
       - ubuntu
     environment:
-      - MYSQL_DATABASE=laravel_db
-      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_USER_DB=laravel_db
+      - MYSQL_ROOT_PWD=root
       - MYSQL_USER=laravel
-      - MYSQL_PASSWORD=laravel
+      - MYSQL_USER_PWD=laravel
     networks:
       vpcbr:
         ipv4_address: 10.0.0.4
