@@ -53,7 +53,7 @@ services:
   php-fpm-71:
     image: index.docker.io/fuke0501/php-fpm71
     # image: fuke0501/php-fpm71
-    build: 
+    build:
       context: ./images/php
       dockerfile: Dockerfile-php7.1
     container_name: web_php71
@@ -77,7 +77,7 @@ services:
   php-fpm-ffmpeg:
     image: index.docker.io/fuke0501/php-fpmffmpeg
     # image: fuke0501/php-fpmffmpeg
-    build: 
+    build:
       context: ./images/php
       dockerfile: Dockerfile-ffmpeg
     container_name: web_phpffmpeg
@@ -106,6 +106,7 @@ services:
     volumes:
       - ./images/ubuntu-mysql/data:/var/lib/mysql
       - ./images/ubuntu-mysql/conf/mysqld.cnf:/etc/mysql/mysql.conf.d/mysqld.cnf
+      - ./images/ubuntu-mysql/conf/mysql.cnf:/etc/mysql/conf.d/mysql.cnf
     ports:
       - "3307:3306"
     privileged: true
@@ -148,6 +149,7 @@ services:
     volumes:
       - ./images/mysql/data:/var/lib/mysql
       - ./images/mysql/conf/mysqld.cnf:/etc/mysql/mysql.conf.d/mysqld.cnf
+      - ./images/ubuntu-mysql/conf/mysql.cnf:/etc/mysql/conf.d/mysql.cnf
     ports:
       - "13060:3306"
     privileged: true
