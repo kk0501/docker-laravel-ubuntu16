@@ -1,14 +1,18 @@
 FROM fuke0501/ubuntu
-MAINTAINER fuke <461025755@qq.com>
+MAINTAINER luke <461025755@qq.com>
 
 RUN apt-get update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y --fix-missing \
-        redis-server \
-    && apt-get autoclean && apt-get autoremove && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y --fix-missing redis-server
 
 RUN mkdir /data && chown redis:redis /data
 VOLUME /data
 WORKDIR /data
+
+RUN groupmod --gid 1000 redis && usermod --uid 1000 --gid 1000 redis
+RUN apt-get autoclean \
+    && apt-get autoremove \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 EXPOSE 6379
 
